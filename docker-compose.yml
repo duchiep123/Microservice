@@ -1,0 +1,69 @@
+version: '3.4'
+
+services:
+  carsservice.api:
+    image: ${DOCKER_REGISTRY-}carsserviceapi
+    ports: 
+       - 50002:80
+    build:
+      context: .
+      dockerfile: CarsService.API/Dockerfile
+    depends_on: 
+       - garage-management-database
+       - localstack
+
+  garage-management-database:
+    container_name: postgres-garage-database
+    image: postgres:latest
+    hostname: garage-management-database 
+    ports: 
+      - "5432:5432"
+    environment:
+      - POSTGRES_PASSWORD=Hiep1234567890
+    volumes:
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+
+  garagesservice.api:
+    image: ${DOCKER_REGISTRY-}garagesserviceapi
+    ports: 
+       - 50001:80
+    build:
+      context: .
+      dockerfile: GaragesService.API/Dockerfile
+    depends_on: 
+       - garage-management-database
+       - localstack
+       - redis
+  
+  redis:
+    image: "redis:alpine"
+    ports: 
+       - "6379:6379"
+
+  localstack:
+    image: localstack/localstack
+    ports:
+      - "4566-4576:4566-4576"
+      - "${PORT_WEB_UI-8080}:${PORT_WEB_UI-8080}"
+    environment:
+      - DOCKER_HOST=unix:///var/run/docker.sock
+      - SERVICES=sns:4575,sqs:4576
+      - DEFAULT_REGION=us-east-1
+      - AWS_ACCESS_KEY_ID=hiep
+      - AWS_SECRET_ACCESS_KEY=hiep
+      - SERVICES=s3,sqs,sns,lambda,cloudformation,sts,iam,cloudwatch,apigateway,events
+      - DEBUG=1
+      - DATA_DIR=/tmp/localstack/data
+      - PORT_WEB_UI=8080
+      - LAMBDA_EXECUTOR=docker-reuse
+      - LAMBDA_REMOTE_DOCKER=false
+      - LAMBDA_REMOVE_CONTAINERS=true
+      - LAMBDA_DOCKER_NETWORK=internal
+      - KINESIS_ERROR_PROBABILITY=${KINESIS_ERROR_PROBABILITY- }
+      - HOST_TMP_FOLDER=${TMPDIR}
+      - HOSTNAME=localhost        
+      - HOSTNAME_EXTERNAL=localhost
+    volumes:
+      - "/var/run/docker.sock:/var/run/docker.sock"
+    depends_on: 
+      - garage-management-database

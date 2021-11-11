@@ -1,0 +1,15 @@
+C:\Users\mrhie\Downloads\testdocker-project\MyMicroservice\GarageManagementModels\bin\Debug\net5.0\GarageManagementModels.deps.json
+C:\Users\mrhie\Downloads\testdocker-project\MyMicroservice\GarageManagementModels\bin\Debug\net5.0\GarageManagementModels.runtimeconfig.json
+C:\Users\mrhie\Downloads\testdocker-project\MyMicroservice\GarageManagementModels\bin\Debug\net5.0\GarageManagementModels.runtimeconfig.dev.json
+C:\Users\mrhie\Downloads\testdocker-project\MyMicroservice\GarageManagementModels\bin\Debug\net5.0\GarageManagementModels.dll
+C:\Users\mrhie\Downloads\testdocker-project\MyMicroservice\GarageManagementModels\bin\Debug\net5.0\ref\GarageManagementModels.dll
+C:\Users\mrhie\Downloads\testdocker-project\MyMicroservice\GarageManagementModels\bin\Debug\net5.0\GarageManagementModels.pdb
+C:\Users\mrhie\Downloads\testdocker-project\MyMicroservice\GarageManagementModels\obj\Debug\net5.0\GarageManagementModels.csproj.AssemblyReference.cache
+C:\Users\mrhie\Downloads\testdocker-project\MyMicroservice\GarageManagementModels\obj\Debug\net5.0\GarageManagementModels.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\mrhie\Downloads\testdocker-project\MyMicroservice\GarageManagementModels\obj\Debug\net5.0\GarageManagementModels.AssemblyInfoInputs.cache
+C:\Users\mrhie\Downloads\testdocker-project\MyMicroservice\GarageManagementModels\obj\Debug\net5.0\GarageManagementModels.AssemblyInfo.cs
+C:\Users\mrhie\Downloads\testdocker-project\MyMicroservice\GarageManagementModels\obj\Debug\net5.0\GarageManagementModels.csproj.CoreCompileInputs.cache
+C:\Users\mrhie\Downloads\testdocker-project\MyMicroservice\GarageManagementModels\obj\Debug\net5.0\GarageManagementModels.dll
+C:\Users\mrhie\Downloads\testdocker-project\MyMicroservice\GarageManagementModels\obj\Debug\net5.0\ref\GarageManagementModels.dll
+C:\Users\mrhie\Downloads\testdocker-project\MyMicroservice\GarageManagementModels\obj\Debug\net5.0\GarageManagementModels.pdb
+C:\Users\mrhie\Downloads\testdocker-project\MyMicroservice\GarageManagementModels\obj\Debug\net5.0\GarageManagementModels.genruntimeconfig.cache

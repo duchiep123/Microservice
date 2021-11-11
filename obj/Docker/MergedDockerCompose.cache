@@ -1,0 +1,111 @@
+services:
+  carsservice.api:
+    build:
+      context: C:\Users\mrhie\Downloads\testdocker-project\MyMicroservice
+      dockerfile: CarsService.API/Dockerfile
+    depends_on:
+      garage-management-database:
+        condition: service_started
+      localstack:
+        condition: service_started
+    environment:
+      ASPNETCORE_ENVIRONMENT: Development
+      ASPNETCORE_URLS: https://+:443;http://+:80
+    image: carsserviceapi
+    ports:
+    - published: 50002
+      target: 80
+    - target: 80
+    - target: 443
+    volumes:
+    - C:\Users\mrhie\AppData\Roaming\ASP.NET\Https:/root/.aspnet/https:ro
+    - C:\Users\mrhie\AppData\Roaming\Microsoft\UserSecrets:/root/.microsoft/usersecrets:ro
+  garage-management-database:
+    container_name: postgres-garage-database
+    environment:
+      POSTGRES_PASSWORD: Hiep1234567890
+    hostname: garage-management-database
+    image: postgres:latest
+    ports:
+    - published: 5432
+      target: 5432
+    volumes:
+    - C:\Users\mrhie\Downloads\testdocker-project\MyMicroservice\init.sql:/docker-entrypoint-initdb.d/init.sql:rw
+  garagesservice.api:
+    build:
+      context: C:\Users\mrhie\Downloads\testdocker-project\MyMicroservice
+      dockerfile: GaragesService.API/Dockerfile
+    depends_on:
+      garage-management-database:
+        condition: service_started
+      localstack:
+        condition: service_started
+      redis:
+        condition: service_started
+    environment:
+      ASPNETCORE_ENVIRONMENT: Development
+      ASPNETCORE_URLS: https://+:443;http://+:80
+    image: garagesserviceapi
+    ports:
+    - published: 50001
+      target: 80
+    - target: 80
+    - target: 443
+    volumes:
+    - C:\Users\mrhie\AppData\Roaming\ASP.NET\Https:/root/.aspnet/https:ro
+    - C:\Users\mrhie\AppData\Roaming\Microsoft\UserSecrets:/root/.microsoft/usersecrets:ro
+  localstack:
+    depends_on:
+      garage-management-database:
+        condition: service_started
+    environment:
+      AWS_ACCESS_KEY_ID: hiep
+      AWS_SECRET_ACCESS_KEY: hiep
+      DATA_DIR: /tmp/localstack/data
+      DEBUG: '1'
+      DEFAULT_REGION: us-east-1
+      DOCKER_HOST: unix:///var/run/docker.sock
+      HOSTNAME: localhost
+      HOSTNAME_EXTERNAL: localhost
+      HOST_TMP_FOLDER: ''
+      KINESIS_ERROR_PROBABILITY: ' '
+      LAMBDA_DOCKER_NETWORK: internal
+      LAMBDA_EXECUTOR: docker-reuse
+      LAMBDA_REMOTE_DOCKER: "false"
+      LAMBDA_REMOVE_CONTAINERS: "true"
+      PORT_WEB_UI: '8080'
+      SERVICES: s3,sqs,sns,lambda,cloudformation,sts,iam,cloudwatch,apigateway,events
+    image: localstack/localstack
+    ports:
+    - published: 4566
+      target: 4566
+    - published: 4567
+      target: 4567
+    - published: 4568
+      target: 4568
+    - published: 4569
+      target: 4569
+    - published: 4570
+      target: 4570
+    - published: 4571
+      target: 4571
+    - published: 4572
+      target: 4572
+    - published: 4573
+      target: 4573
+    - published: 4574
+      target: 4574
+    - published: 4575
+      target: 4575
+    - published: 4576
+      target: 4576
+    - published: 8080
+      target: 8080
+    volumes:
+    - /var/run/docker.sock:/var/run/docker.sock:rw
+  redis:
+    image: redis:alpine
+    ports:
+    - published: 6379
+      target: 6379
+version: '3.4'
