@@ -1,4 +1,5 @@
 using Amazon;
+using Amazon.DynamoDBv2;
 using Amazon.Extensions.NETCore.Setup;
 using Amazon.Runtime;
 using Amazon.S3;
@@ -79,12 +80,14 @@ namespace CarsService.API
             Console.WriteLine(res.DefaultClientConfig.ServiceURL);
             Console.WriteLine(res.Profile);
             Console.WriteLine(res.Region);*/
-            var awsSqsOption = new AWSOptions();
-            awsSqsOption.Credentials = new BasicAWSCredentials("hiep", "hiep");
-            awsSqsOption.Region = RegionEndpoint.USEast1;
-            awsSqsOption.DefaultClientConfig.ServiceURL = "http://localstack:4566";
-            services.AddAWSService<IAmazonSimpleNotificationService>(awsSqsOption);
-            services.AddAWSService<IAmazonSQS>(awsSqsOption);
+            var awsOption = new AWSOptions();
+            awsOption.Credentials = new BasicAWSCredentials("hiep", "hiep");
+            awsOption.Region = RegionEndpoint.USEast1;
+            awsOption.DefaultClientConfig.ServiceURL = "http://localstack:4566";
+
+            services.AddAWSService<IAmazonSimpleNotificationService>(awsOption);
+            services.AddAWSService<IAmazonSQS>(awsOption);
+            services.AddAWSService<IAmazonDynamoDB>(awsOption);
             services.AddSingleton<IAmazonS3>(p => {
                 var config = new AmazonS3Config
                 {

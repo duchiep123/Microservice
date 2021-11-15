@@ -36,8 +36,4 @@
     <ProjectReference Include="..\GarageManagementModels\GarageManagementModels.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Models\" />
-  </ItemGroup>
-
 </Project>

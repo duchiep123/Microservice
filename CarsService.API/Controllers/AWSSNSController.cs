@@ -28,11 +28,7 @@ namespace CarsService.API.Controllers
         }
 
         // GET api/<AWSSNSController>/5
-        [HttpGet("{id}")]
-        public string Get(int id)
-        {
-            return "value";
-        }
+       
 
         [HttpGet("createSNS/{name}")]
         public async Task<IActionResult> CreateSNS(string name)
@@ -41,23 +37,11 @@ namespace CarsService.API.Controllers
             return Ok(result);
         }
         // POST api/<AWSSNSController>
-        [HttpPost]
-        public async Task<IActionResult> CreateSNSMessage([FromBody] CreateMessageSNSRequestModel request)
+        [HttpPost("createMessage")]
+        public async Task<IActionResult> CreateSNSMessage(CreateMessageSNSRequestModel request)
         {
-            var result = await _snsHelper.SendMessageToSNS(request.Message, request.Topic);
+            var result = await _snsHelper.SendMessageToSNS(request.Message, request.TopicARN);
             return Ok(result);
-        }
-
-        // PUT api/<AWSSNSController>/5
-        [HttpPut("{id}")]
-        public void Put(int id, [FromBody] string value)
-        {
-        }
-
-        // DELETE api/<AWSSNSController>/5
-        [HttpDelete("{id}")]
-        public void Delete(int id)
-        {
         }
     }
 }

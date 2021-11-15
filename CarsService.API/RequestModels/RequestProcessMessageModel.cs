@@ -5,9 +5,9 @@ using System.Threading.Tasks;
 
 namespace CarsService.API.RequestModels
 {
-    public class CreateMessageSNSRequestModel
+    public class RequestProcessMessageModel
     {
-        public string TopicARN { get; set; }
-        public string Message { get; set; }
+        public List<string> ReceiptHandles { get; set; }
+        public string  QueueURL { get; set; }
     }
 }

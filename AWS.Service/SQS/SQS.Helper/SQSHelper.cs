@@ -19,17 +19,49 @@ namespace AWS.Service.SQS.SQS.Helper
         {
             _sqs = sqs;
         }
-
-        public async Task<string> CreateSQSQueue(string name)
+        private static async Task<string> GetQueueArn(IAmazonSQS sqsClient, string qUrl)
         {
+            GetQueueAttributesResponse responseGetAtt = await sqsClient.GetQueueAttributesAsync(
+              qUrl, new List<string> { QueueAttributeName.QueueArn });
+            return responseGetAtt.QueueARN;
+        }
+
+        public async Task<string> CreateSQSQueue(
+            string name,
+            string ReceiveMessageWaitTimeSeconds,
+            string maxReceiveCount,
+            string deadLetterQueueUrl = null
+            )
+        {
+            var attrs = new Dictionary<string, string>();
+            attrs.Add(QueueAttributeName.ReceiveMessageWaitTimeSeconds, "10");
+            if (!string.IsNullOrEmpty(deadLetterQueueUrl))
+            {
+                var queueArnDeadLetter = await GetQueueArn(_sqs, deadLetterQueueUrl);
+                var redrivePolicy = new { deadLetterTargetArn = queueArnDeadLetter, maxReceiveCount = maxReceiveCount };
+                /*attrs.Add(QueueAttributeName.RedrivePolicy,
+                  $"{{\"deadLetterTargetArn\":\"{await GetQueueArn(_sqs, deadLetterQueueUrl)}\"," +
+                  $"\"maxReceiveCount\":\"{maxReceiveCount}\"}}");*/
+
+                attrs.Add(QueueAttributeName.RedrivePolicy,JsonSerializer.Serialize(redrivePolicy));
+                // Add other attributes for the message queue such as VisibilityTimeout
+            }
+            else {
+                var resultCreateDeadLetterQueue = await _sqs.CreateQueueAsync(new CreateQueueRequest() // VisibilityTimeout mac dinh la 30s
+                {
+                    QueueName = name+"-dlq"
+                });
+                var dqlQueueArn = await GetQueueArn(_sqs, resultCreateDeadLetterQueue.QueueUrl);
+                var redrivePolicy = new { deadLetterTargetArn = dqlQueueArn, maxReceiveCount = maxReceiveCount };
+                attrs.Add(QueueAttributeName.RedrivePolicy, JsonSerializer.Serialize(redrivePolicy));
+
+            }
             var resultCreateQueue = await _sqs.CreateQueueAsync(new CreateQueueRequest() // VisibilityTimeout mac dinh la 30s
             {
                 QueueName = name,
-                Attributes = new Dictionary<string, string>
-                     {
-                        {"ReceiveMessageWaitTimeSeconds", "10"},
-                     }
+                Attributes = attrs
             });
+            
             // https://docs.aws.amazon.com/AWSSimpleQueueService/latest/APIReference/API_GetQueueAttributes.html
             return resultCreateQueue.HttpStatusCode == System.Net.HttpStatusCode.OK ? resultCreateQueue.QueueUrl : "Create queue failed.";
         }
@@ -52,15 +84,15 @@ namespace AWS.Service.SQS.SQS.Helper
                 throw ex;
             }
         }
-        public async Task<List<Message>> ReceiveMessageAsync(string queueName)
+        public async Task<List<Message>> ReceiveMessageAsync(string queueUrl)
         {
             try
             {
                 //Create New instance  
                 var request = new ReceiveMessageRequest
                 {
-                    QueueUrl = "http://localhost:4566/000000000000/"+queueName,
-                    MaxNumberOfMessages = 10,
+                    QueueUrl = queueUrl,
+                    MaxNumberOfMessages = 2,
                     WaitTimeSeconds = 5
                 };
                 //CheckIs there any new message available to process  
@@ -73,12 +105,13 @@ namespace AWS.Service.SQS.SQS.Helper
                 throw ex;
             }
         }
-        public async Task<bool> DeleteMessageAsync(string messageReceiptHandle)
+        public async Task<bool> DeleteMessageAsync(string messageReceiptHandle, string queueUrl)
         {
             try
             {
+                
                 //Deletes the specified message from the specified queue  
-                var deleteResult = await _sqs.DeleteMessageAsync("", messageReceiptHandle);
+                var deleteResult = await _sqs.DeleteMessageAsync(queueUrl, messageReceiptHandle);
                 return deleteResult.HttpStatusCode == System.Net.HttpStatusCode.OK;
             }
             catch (Exception ex)

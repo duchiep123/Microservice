@@ -1,4 +1,5 @@
 ﻿using GarageManagementModels;
+using GaragesService.API.RequestModels;
 using GaragesService.API.ResponseModel;
 using System;
 using System.Collections.Generic;
@@ -9,7 +10,7 @@ namespace GaragesService.API.Service
 {
     public interface IGarageService
     {
-        Task<ResponseAddGarageModel> AddNewGarage();
+        Task<ResponseAddGarageModel> AddNewGarage(RequestCreateGarageModel request);
         Garage GetGarageById(int id);
     }
 }

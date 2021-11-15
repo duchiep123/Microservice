@@ -38,7 +38,7 @@ namespace GaragesService.API.Tasks
                             {
                                 BackgroundJob.Enqueue<TasksService>(
                                     x => x.RunProcessMessages(message.Body, stoppingToken));
-                                await _sqsHelper.DeleteMessageAsync(message.ReceiptHandle);
+                                await _sqsHelper.DeleteMessageAsync(message.ReceiptHandle, "queueUrl");
                             }
                         }
                     }

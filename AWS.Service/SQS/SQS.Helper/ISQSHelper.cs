@@ -10,10 +10,13 @@ namespace AWS.Service.SQS.SQS.Helper
 {
     public interface ISQSHelper
     {
-        Task<string> CreateSQSQueue(string name);
+        Task<string> CreateSQSQueue(string name,
+            string ReceiveMessageWaitTimeSeconds,
+            string maxReceiveCount,
+            string deadLetterQueueUrl = null);
         Task<bool> SendMessageAsync(string queueURL, UserDetail userDetail);
-        Task<List<Message>> ReceiveMessageAsync(string queueName);
-        Task<bool> DeleteMessageAsync(string messageReceiptHandle);
+        Task<List<Message>> ReceiveMessageAsync(string queueUrl);
+        Task<bool> DeleteMessageAsync(string messageReceiptHandle, string queueUrl);
         Task<List<string>> GetAllQueues();
     }
 }

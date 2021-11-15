@@ -38,29 +38,31 @@ namespace CarsService.API.Controllers
             return Ok(result);
         }
 
-        [HttpGet("createqueue/{name}")]
-        public async Task<IActionResult> CreateQueue(string name)
+        [HttpPost("createqueue")]
+        public async Task<IActionResult> CreateQueue(RequestCreateQueueModel request)
         {
-            var result = await _AWSSQSService.TestCreateQueue(name);
+            var result = await _AWSSQSService.TestCreateQueue(request.Name, request.ReceiveMessageWaitTimeSeconds, request.MaxReceiveCount, request.DeadLetterQueueUrl);
             return Ok(result);
         }
 
-        
+        [HttpGet("getattriubutes/{name}")]
+        public async Task<IActionResult> GetAttriute(string name )
+        {
+            string queueUrl = "http://localhost:4566/000000000000/" + name;
+            var result = await _sqs.GetAttributesAsync(queueUrl);
+            return Ok(result);
+        }
+
+
 
         [HttpPost("Subscribe")]
         public async Task<IActionResult> Subscribe(SubscribeRequestModel subscribeRequestModel)
         {
-            var result = await _sns.SubscribeSQStoSNS(subscribeRequestModel.Topic, subscribeRequestModel.QueueURL, _sqs);
+            var result = await _sns.SubscribeSQStoSNS(subscribeRequestModel.TopicName, subscribeRequestModel.QueueName, _sqs);
             return Ok(result);
         }
 
-        [Route("postMessage/{queueName}")]
-        [HttpPost]
-        public async Task<IActionResult> PostMessageAsync(User user, string queueName)
-        {
-            var result = await _AWSSQSService.PostMessageAsync(queueName, user);
-            return Ok(new { isSucess = result });
-        }
+        
         [Route("getAllMessages/{queueName}")]
         [HttpGet]
         public async Task<IActionResult> GetAllMessagesAsync(string queueName)
@@ -68,6 +70,7 @@ namespace CarsService.API.Controllers
             var result = await _AWSSQSService.GetAllMessagesAsync(queueName);
             return Ok(result);
         }
+
         [Route("deleteMessage")]
         [HttpDelete]
         public async Task<IActionResult> DeleteMessageAsync(DeleteMessage deleteMessage)

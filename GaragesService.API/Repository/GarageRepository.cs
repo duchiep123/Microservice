@@ -35,7 +35,7 @@ namespace GaragesService.API.Repository
 
         public IEnumerable<Garage> GetGarages()
         {
-            throw new NotImplementedException();
+            return _context.Garage.AsEnumerable();
         }
 
         public int SaveChanges()

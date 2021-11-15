@@ -60,8 +60,6 @@ namespace GaragesService.API
                 configuration.UseRedisStorage(Redis);
 
             });
-            
-
             services.AddStackExchangeRedisCache(o => o.Configuration = "redis:6379"); // config DI redis, add hangfire.aspcore package
             services.AddHangfireServer(action => action.SchedulePollingInterval = TimeSpan.FromMilliseconds(1000));//  set thoi gian nho nhat
             services.AddControllers();
@@ -110,7 +108,7 @@ namespace GaragesService.API
                 IsReadOnlyFunc = (DashboardContext context) => true
             });
             //BackgroundJob.Enqueue<TasksService>(t => t.RunProcessMessages("Hiep"));
-            // RecurringJob.AddOrUpdate("Run every 1 minutes", () => Console.WriteLine("reading..."), "*/20 * * * * *"); // */20 * * * * * 
+             //RecurringJob.AddOrUpdate<TasksService>(t =>t.ReadQueue("http://localhost:4566/000000000000/garage-queue"), "*/20 * * * * * "); // */20 * * * * * 
         }
     }
 }

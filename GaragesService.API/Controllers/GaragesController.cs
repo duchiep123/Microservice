@@ -1,4 +1,7 @@
-﻿using GaragesService.API.Service;
+﻿using GaragesService.API.RequestModels;
+using GaragesService.API.Service;
+using GaragesService.API.Tasks;
+using Hangfire;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Caching.Distributed;
 using System;
@@ -24,32 +27,33 @@ namespace GaragesService.API.Controllers
             _garageService = garageService;
         }
         // GET: api/<GaragesController>
-        [HttpGet("callapi/{port}")]
-        public async Task<IActionResult> Get(string port)
-        {
-            HttpClient client = new HttpClient();
-            HttpResponseMessage response = await client.GetAsync("http://carsservice.api:" + port+"/api/cars/1");
-            if (response.IsSuccessStatusCode)
-            {
-               var result = response.Content;
-                return Ok(result);
-            }
-            return BadRequest("Fail");
 
+        [HttpPost]
+        public async Task<IActionResult> Post(RequestCreateGarageModel request)
+        {
+            if (ModelState.IsValid) {
+                var result = await _garageService.AddNewGarage(request);
+                if (result.Status == 0) {
+                    return Ok(result);
+                }
+                return BadRequest(result);
+            }
+            return BadRequest(ModelState);
+            
         }
 
-        [HttpGet]
-        public async Task<IActionResult> Get2()
+        [HttpGet("readqueue/{queueName}")]
+        public IActionResult Read(string queueName)
         {
-            var result = await _garageService.AddNewGarage();
-            return Ok(result);
+            RecurringJob.AddOrUpdate<TasksService>(t => t.ReadQueue("http://localhost:4566/000000000000/"+queueName), "*/20 * * * * * ");
+
+            return Ok();
         }
 
         // GET api/<GaragesController>/5
         [HttpGet("{id}")]
         public string Get(int id)
         {
-            Console.WriteLine("Vo ne");
             _redisCache.SetString("test","nguyen duc hiep "+id);
             return "value";
         }
@@ -58,24 +62,6 @@ namespace GaragesService.API.Controllers
         public string GetData()
         {
             return _redisCache.GetString("test");
-        }
-
-        // POST api/<GaragesController>
-        [HttpPost]
-        public void Post([FromBody] string value)
-        {
-        }
-
-        // PUT api/<GaragesController>/5
-        [HttpPut("{id}")]
-        public void Put(int id, [FromBody] string value)
-        {
-        }
-
-        // DELETE api/<GaragesController>/5
-        [HttpDelete("{id}")]
-        public void Delete(int id)
-        {
         }
     }
 }

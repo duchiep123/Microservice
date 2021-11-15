@@ -10,7 +10,7 @@ namespace CarsService.API.Service
 {
     public interface ICarService
     {
-        Task<ResponseAddCarModel> AddNewCar();
+        Task<ResponseAddCarModel> AddNewCar(RequestCreateCarModel request);
         Car GetCarById(int id);
     }
 }

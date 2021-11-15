@@ -7,7 +7,7 @@ namespace CarsService.API.RequestModels
 {
     public class SubscribeRequestModel
     {
-        public string QueueURL { get; set; }
-        public string Topic { get; set; }
+        public string QueueName { get; set; }
+        public string TopicName { get; set; }
     }
 }

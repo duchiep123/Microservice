@@ -28,12 +28,12 @@ namespace AWS.Service.SNS.SNS.Helper
             return "";
         }
 
-        public async Task<string> SubscribeSQStoSNS(string snsTopic, string queueURL, IAmazonSQS amazonSQS)
+        public async Task<string> SubscribeSQStoSNS(string topicName, string queueName, IAmazonSQS amazonSQS)
         {
-            var topic = await _simpleNotificationService.FindTopicAsync(snsTopic);
+            var topic = await _simpleNotificationService.FindTopicAsync(topicName);
             if (topic != null)
             {
-                var sqs = await amazonSQS.GetQueueUrlAsync(queueURL);
+                var sqs = await amazonSQS.GetQueueUrlAsync(queueName);
                 var result = await _simpleNotificationService.SubscribeQueueAsync(topic.TopicArn, amazonSQS, sqs.QueueUrl);
                 return result;
             }
@@ -45,7 +45,8 @@ namespace AWS.Service.SNS.SNS.Helper
             var request = new PublishRequest    
             {
                 Message = message,
-                TopicArn = topicArn
+                TopicArn = topicArn,
+
             };
             // When you subscribe an Amazon SQS queue to an SNS topic, Amazon SNS uses HTTPS to forward messages to Amazon SQS
             var response = await _simpleNotificationService.PublishAsync(request);

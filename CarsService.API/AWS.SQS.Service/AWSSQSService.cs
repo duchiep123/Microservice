@@ -18,8 +18,11 @@ namespace CarsService.API.AWS.SQS.Service
         }
 
 
-        public async Task<string> TestCreateQueue(string name) {
-            var result = await _AWSSQSHelper.CreateSQSQueue(name);
+        public async Task<string> TestCreateQueue(string name,
+            string ReceiveMessageWaitTimeSeconds,
+            string maxReceiveCount,
+            string deadLetterQueueUrl = null) {
+            var result = await _AWSSQSHelper.CreateSQSQueue(name,ReceiveMessageWaitTimeSeconds, maxReceiveCount,deadLetterQueueUrl);
             return result;
         }
         public async Task<bool> PostMessageAsync(string queueUrl, User user)
@@ -46,7 +49,14 @@ namespace CarsService.API.AWS.SQS.Service
             List<AllMessage> allMessages = new List<AllMessage>();
             try
             {
-                List<Message> messages = await _AWSSQSHelper.ReceiveMessageAsync(queueName);
+                string url = "http://localhost:4566/000000000000/" + queueName;
+                List<Message> messages = await _AWSSQSHelper.ReceiveMessageAsync(url);
+                for (int i = 0; i < messages.Count; i++)
+                {
+                    
+                    var result =   JsonSerializer.Deserialize<CustomMessageBody>(messages[i].Body);
+                    Console.WriteLine(result.Message);
+                }
                 allMessages = messages.Select(c => new AllMessage { MessageId = c.MessageId, ReceiptHandle = c.ReceiptHandle, UserDetail = JsonSerializer.Deserialize<UserDetail>(c.Body) }).ToList();
                 return allMessages;
             }
@@ -60,7 +70,7 @@ namespace CarsService.API.AWS.SQS.Service
         {
             try
             {
-                return await _AWSSQSHelper.DeleteMessageAsync(deleteMessage.ReceiptHandle);
+                return await _AWSSQSHelper.DeleteMessageAsync(deleteMessage.ReceiptHandle, "");
             }
             catch (Exception ex)
             {
