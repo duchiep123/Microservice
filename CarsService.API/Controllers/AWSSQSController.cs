@@ -70,13 +70,5 @@ namespace CarsService.API.Controllers
             var result = await _AWSSQSService.GetAllMessagesAsync(queueName);
             return Ok(result);
         }
-
-        [Route("deleteMessage")]
-        [HttpDelete]
-        public async Task<IActionResult> DeleteMessageAsync(DeleteMessage deleteMessage)
-        {
-            var result = await _AWSSQSService.DeleteMessageAsync(deleteMessage);
-            return Ok(new { isSucess = result });
-        }
     }
 }

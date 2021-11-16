@@ -1,5 +1,4 @@
 version: '3.4'
-
 services:
   carsservice.api:
     image: ${DOCKER_REGISTRY-}carsserviceapi
@@ -15,7 +14,6 @@ services:
   garage-management-database:
     container_name: postgres-garage-database
     image: postgres:latest
-    hostname: garage-management-database 
     ports: 
       - "5432:5432"
     environment:

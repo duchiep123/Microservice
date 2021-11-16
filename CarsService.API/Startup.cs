@@ -80,6 +80,10 @@ namespace CarsService.API
             Console.WriteLine(res.DefaultClientConfig.ServiceURL);
             Console.WriteLine(res.Profile);
             Console.WriteLine(res.Region);*/
+
+            //If your SQS clients live with localstack in the same docker network, then it’s the container’s host name inside the docker network.In my docker - compose file it’s HOSTNAME_EXTERNAL = localstack.
+
+            // If your SQS clients live on the docker host it’s HOSTNAME_EXTERNAL = localhost and you must expose your SQS port to the host.
             var awsOption = new AWSOptions();
             awsOption.Credentials = new BasicAWSCredentials("hiep", "hiep");
             awsOption.Region = RegionEndpoint.USEast1;

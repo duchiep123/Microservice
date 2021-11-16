@@ -1,4 +1,5 @@
 ﻿using Amazon.DynamoDBv2;
+using Amazon.DynamoDBv2.DataModel;
 using Amazon.DynamoDBv2.DocumentModel;
 using Amazon.DynamoDBv2.Model;
 using Amazon.S3;
@@ -40,36 +41,36 @@ namespace CarsService.API.Controllers
             return Ok(person);
         }
 
-        [HttpPost("createPersonDynamoDB")]
+        [HttpPost("createMusicDynamoDB")]
         public async Task<IActionResult> CreateDynamoDB()
         {
             var request = new CreateTableRequest
             {
                 AttributeDefinitions = new List<AttributeDefinition>() {
                     new AttributeDefinition
-                {
-                    AttributeName = "Artist",
-                    AttributeType = "S"
-                },
-                new AttributeDefinition
-                {
-                    AttributeName = "SongTitle",
-                    AttributeType = "S"
-                }
+                    {
+                        AttributeName = "Artist",
+                        AttributeType = "S"
+                    },
+                    new AttributeDefinition
+                    {
+                        AttributeName = "SongTitle",
+                        AttributeType = "S"
+                    }
                 },
                 KeySchema = new List<KeySchemaElement>
-            {
-                new KeySchemaElement
                 {
-                    AttributeName = "Artist",
-                    KeyType = "HASH" //Partition key
+                    new KeySchemaElement
+                    {
+                        AttributeName = "Artist",
+                        KeyType = "HASH" //Partition key
+                    },
+                    new KeySchemaElement
+                    {
+                        AttributeName = "SongTitle",
+                        KeyType = "RANGE" //Sort key
+                    }
                 },
-                new KeySchemaElement    
-                {
-                    AttributeName = "SongTitle",
-                    KeyType = "RANGE" //Sort key
-                }
-            },
                 ProvisionedThroughput = new ProvisionedThroughput
                 {
                     ReadCapacityUnits = 5,
@@ -93,10 +94,6 @@ namespace CarsService.API.Controllers
         [HttpPost("createMusic")]
         public async Task<IActionResult> CreateMusic(RequestCreateMusic requestCreateMusic)
         {
-            var musicTable = Table.LoadTable(_amazonDynamoDB, "Music");
-            var document = new Document();
-            document["Artist"] = requestCreateMusic.Artist;
-            document["SongTitle"] = requestCreateMusic.SongTitle;
             var request = new PutItemRequest
             {
                 TableName = "Music",
@@ -104,11 +101,12 @@ namespace CarsService.API.Controllers
                 {
                     { "Artist", new AttributeValue { S = requestCreateMusic.Artist }},
                     { "SongTitle", new AttributeValue { S = requestCreateMusic.SongTitle }},
-          
+                    { "Album", new AttributeValue { S = requestCreateMusic.Album }},
+                    { "Year", new AttributeValue { N = requestCreateMusic.Year.ToString() }},
+
                 }
             };
-            //var result = await _amazonDynamoDB.PutItemAsync(request);
-            var result = await musicTable.PutItemAsync(document);
+            var result = await _amazonDynamoDB.PutItemAsync(request);
             return Ok(result);
         }
 
@@ -141,7 +139,27 @@ namespace CarsService.API.Controllers
             };
             //var result = await _amazonDynamoDB.GetItemAsync(hash,);
             var result = await musicTable.GetItemAsync(hash, range);
-            return Ok(new {data =result });
+            var returnResult = result.ToJson();
+            return Ok(returnResult);
+        }
+
+        [HttpGet("getMusic")]
+        public async Task<IActionResult> GetMusicByQuery(string artist, string songTitle)
+        {
+
+            var request = new QueryRequest
+            {
+                TableName = "Music",
+                KeyConditionExpression = "Artist = :v_Artist",
+                ExpressionAttributeValues = new Dictionary<string, AttributeValue> {
+                    {":v_Artist", new AttributeValue { S =  artist }}}
+            };
+            var result = await _amazonDynamoDB.QueryAsync(request);
+
+            if (result.HttpStatusCode == System.Net.HttpStatusCode.OK) {
+                return Ok(result.Items);
+            }
+            return BadRequest();
         }
 
         // GET api/<CarsController>/5

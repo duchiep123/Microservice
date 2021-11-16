@@ -34,7 +34,7 @@ namespace AWS.Service.SQS.SQS.Helper
             )
         {
             var attrs = new Dictionary<string, string>();
-            attrs.Add(QueueAttributeName.ReceiveMessageWaitTimeSeconds, "10");
+            attrs.Add(QueueAttributeName.ReceiveMessageWaitTimeSeconds, ReceiveMessageWaitTimeSeconds);
             if (!string.IsNullOrEmpty(deadLetterQueueUrl))
             {
                 var queueArnDeadLetter = await GetQueueArn(_sqs, deadLetterQueueUrl);

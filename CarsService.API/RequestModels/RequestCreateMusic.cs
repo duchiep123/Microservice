@@ -10,5 +10,7 @@ namespace CarsService.API.RequestModels
     {
         public string Artist { get; set; }
         public string SongTitle { get; set; }
+        public string Album { get; set; }
+        public int Year { get; set; }
     }
 }
