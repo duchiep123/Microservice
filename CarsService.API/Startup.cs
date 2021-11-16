@@ -11,6 +11,7 @@ using AWS.Service.SNS;
 using AWS.Service.SNS.SNS.Helper;
 using AWS.Service.SQS.SQS.Helper;
 using CarsService.API.AWS.SQS.Service;
+using CarsService.API.FilterModel;
 using CarsService.API.Repository;
 using CarsService.API.Service;
 using GarageManagementModels;
@@ -60,6 +61,7 @@ namespace CarsService.API
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "CarsService.API", Version = "v1" });
+                c.OperationFilter<FileCreation>();
             });
             var appSettingsSection = Configuration.GetSection("ServiceConfiguration");
             /*var awsCreds = new BasicAWSCredentials("hiep", "hiep");
@@ -117,6 +119,7 @@ namespace CarsService.API
                 app.UseDeveloperExceptionPage();
                 app.UseSwagger();
                 app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "CarsService.API v1"));
+                
             }
 
             app.UseHttpsRedirection();

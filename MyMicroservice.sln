@@ -11,7 +11,7 @@ Project("{E53339B2-1760-4266-BCC7-CA923CBCF16C}") = "docker-compose", "docker-co
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GarageManagementModels", "GarageManagementModels\GarageManagementModels.csproj", "{A83AE887-E4FA-4D3D-9013-BD7A8F8A2307}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AWS.Service", "AWS.Service\AWS.Service.csproj", "{4078364C-705C-40C8-9901-8C1D7799870E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AWS.Service", "AWS.Service\AWS.Service.csproj", "{4078364C-705C-40C8-9901-8C1D7799870E}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
