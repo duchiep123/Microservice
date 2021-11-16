@@ -1,6 +1,7 @@
-Start 
-docker-compose build
-docker-compose up
+Start <br/>
+docker-compose build <br/>
+docker-compose up <br/>
 
-Create sqs, sns subscribing sqs to sns and config dead letter queue
+<br/><br/>
+Create sqs, sns subscribing sqs to sns and config dead letter queue <br/>
 sh create-sqs-sns.shs
