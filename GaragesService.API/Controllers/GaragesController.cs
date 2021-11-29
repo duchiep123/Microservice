@@ -26,7 +26,13 @@ namespace GaragesService.API.Controllers
             _redisCache = redisCache ?? throw new ArgumentNullException(nameof(redisCache));
             _garageService = garageService;
         }
-        // GET: api/<GaragesController>
+
+        [HttpGet("{id}")]
+        public IActionResult Get(int id)
+        {
+            var result = _garageService.GetGarageById(id);
+            return Ok(result);
+        }
 
         [HttpPost]
         public async Task<IActionResult> Post(RequestCreateGarageModel request)
@@ -51,8 +57,8 @@ namespace GaragesService.API.Controllers
         }
 
         // GET api/<GaragesController>/5
-        [HttpGet("{id}")]
-        public string Get(int id)
+        [HttpGet("redis/{id}")]
+        public string GetInRedis(int id)
         {
             _redisCache.SetString("test","nguyen duc hiep "+id);
             return "value";

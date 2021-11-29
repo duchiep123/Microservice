@@ -1,4 +1,5 @@
-﻿using AWS.Service.Models;
+﻿using Amazon.SQS.Model;
+using AWS.Service.Models;
 using AWS.Service.SQS.SQS.Helper;
 using GaragesService.API.Repository;
 using Hangfire;
@@ -69,8 +70,8 @@ namespace GaragesService.API.Tasks
             {
                 try
                 {
-                    var content = JsonSerializer.Deserialize<CustomMessageBody>(item.Body);
-                    if (content.Message.Contains("Get all"))
+                    var message = JsonSerializer.Deserialize<CustomMessageBody>(item.Body);
+                    if (message.Content.Contains("Get all"))
                     {
                         var result = _garageRepository.GetGarages();
                        
@@ -78,6 +79,13 @@ namespace GaragesService.API.Tasks
                         {
                             Console.WriteLine(item2.Name);
                         }
+                        ChangeMessageVisibilityRequest changeMessageVisibilityRequest = new ChangeMessageVisibilityRequest
+                        {
+                            QueueUrl = queueUrl,
+                            ReceiptHandle = item.ReceiptHandle,
+                            VisibilityTimeout = 50
+
+                        };
                         var deleteResult =  await _sqsHelper.DeleteMessageAsync(item.ReceiptHandle, queueUrl);
                         if (deleteResult) {
                             Console.WriteLine("Done");
@@ -86,7 +94,7 @@ namespace GaragesService.API.Tasks
                     }
                     else
                     {
-                        Console.WriteLine(content.Message);
+                        Console.WriteLine(message.Content);
                         // sau 3 lan thi vo dlq
                         
                     }

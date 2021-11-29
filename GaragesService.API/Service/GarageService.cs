@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Net.Http;
 
 namespace GaragesService.API.Service
 {
@@ -29,7 +30,8 @@ namespace GaragesService.API.Service
 
         public Garage GetGarageById(int id)
         {
-            throw new NotImplementedException();
+            var result = _garageRepository.GetGarageById(id);
+            return result;
         }
     }
 }

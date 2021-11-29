@@ -8,10 +8,22 @@ EXPOSE 443
 FROM mcr.microsoft.com/dotnet/sdk:5.0 AS build
 WORKDIR /src
 COPY ["CarsService.API/CarsService.API.csproj", "CarsService.API/"]
-RUN dotnet tool install --global dotnet-ef
 RUN dotnet restore "CarsService.API/CarsService.API.csproj"
 COPY . .
 WORKDIR "/src/CarsService.API"
 RUN dotnet build "CarsService.API.csproj" -c Release -o /app/build
-RUN chmod +x ../entrypoint.sh
-CMD /bin/bash ../entrypoint.sh
+
+FROM build AS publish
+RUN dotnet publish "CarsService.API.csproj" -c Release -o /app/publish
+COPY ["CarsService.API/startdb.sh", "CarsService.API/"]
+
+FROM base AS final
+WORKDIR /app
+RUN ls
+COPY --from=publish /app/publish .
+ENTRYPOINT ["dotnet", "CarsService.API.dll"]
+
+FROM build AS publish
+RUN dotnet tool install --global dotnet-ef
+RUN chmod +x ./startdb.sh
+CMD /bin/bash ./startdb.sh

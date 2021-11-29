@@ -45,7 +45,7 @@ namespace AWS.Service.SNS.SNS.Helper
             var request = new PublishRequest    
             {
                 Message = message,
-                TopicArn = topicArn,
+                TopicArn = topicArn
 
             };
             // When you subscribe an Amazon SQS queue to an SNS topic, Amazon SNS uses HTTPS to forward messages to Amazon SQS

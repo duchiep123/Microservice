@@ -19,7 +19,6 @@ namespace GarageManagementModels
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
-
             modelBuilder.Entity<Car>().Property(c => c.Id).ValueGeneratedOnAdd();
             modelBuilder.Entity<Garage>().Property(g => g.Id).ValueGeneratedOnAdd();
         }

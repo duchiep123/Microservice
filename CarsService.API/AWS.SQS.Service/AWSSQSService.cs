@@ -55,7 +55,7 @@ namespace CarsService.API.AWS.SQS.Service
                 {
                     
                     var result =   JsonSerializer.Deserialize<CustomMessageBody>(messages[i].Body);
-                    Console.WriteLine(result.Message);
+                    Console.WriteLine(result.Content);
                 }
                 allMessages = messages.Select(c => new AllMessage { MessageId = c.MessageId, ReceiptHandle = c.ReceiptHandle, UserDetail = JsonSerializer.Deserialize<UserDetail>(c.Body) }).ToList();
                 return allMessages;

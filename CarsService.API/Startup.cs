@@ -14,6 +14,8 @@ using CarsService.API.AWS.SQS.Service;
 using CarsService.API.FilterModel;
 using CarsService.API.Repository;
 using CarsService.API.Service;
+using Elasticsearch.Net;
+using Elasticsearch.Net.Aws;
 using GarageManagementModels;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -25,6 +27,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
+using Nest;
 using Npgsql;
 using System;
 using System.Collections.Generic;
@@ -43,7 +46,7 @@ namespace CarsService.API
         public IConfiguration Configuration { get; }
 
         // This method gets called by the runtime. Use this method to add services to the container.
-        public async void ConfigureServices(IServiceCollection services)
+        public void ConfigureServices(IServiceCollection services)
         {
 
             var connectionString = Configuration["ConnectionString"];
@@ -91,6 +94,12 @@ namespace CarsService.API
             awsOption.Region = RegionEndpoint.USEast1;
             awsOption.DefaultClientConfig.ServiceURL = "http://localstack:4566";
 
+            var httpConnection = new AwsHttpConnection(awsOption);
+            var pool = new SingleNodeConnectionPool(new Uri("http://my-logs.us-east-1.es.localhost.localstack.cloud:4566"));
+            var config = new ConnectionSettings(pool, httpConnection);
+            var client = new ElasticClient(config);
+            var response = client.Ping();
+            Console.WriteLine("Checking.... : "+response.IsValid);
             services.AddAWSService<IAmazonSimpleNotificationService>(awsOption);
             services.AddAWSService<IAmazonSQS>(awsOption);
             services.AddAWSService<IAmazonDynamoDB>(awsOption);

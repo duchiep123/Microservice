@@ -1,4 +1,5 @@
 ﻿using GarageManagementModels;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -27,7 +28,7 @@ namespace CarsService.API.Repository
         public Car GetCarById(int id)
         {
             var car = _context.Cars
-                       .Where(c => c.Id == id)
+                       .Where(c => c.Id == id).Include(c => c.Garage)
                        .FirstOrDefault();
             return car;
         }

@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.Json;
 using System.Threading.Tasks;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
@@ -55,7 +56,7 @@ namespace CarsService.API.Controllers
 
 
 
-        [HttpPost("Subscribe")]
+        [HttpPost("subscribe")]
         public async Task<IActionResult> Subscribe(SubscribeRequestModel subscribeRequestModel)
         {
             var result = await _sns.SubscribeSQStoSNS(subscribeRequestModel.TopicName, subscribeRequestModel.QueueName, _sqs);
@@ -65,9 +66,10 @@ namespace CarsService.API.Controllers
         
         [Route("getAllMessages/{queueName}")]
         [HttpGet]
-        public async Task<IActionResult> GetAllMessagesAsync(string queueName)
-        {
-            var result = await _AWSSQSService.GetAllMessagesAsync(queueName);
+        public async Task<IActionResult> GetAllMessagesAsync(string queueName) { 
+            string queueUrl = "http://localhost:4566/000000000000/" + queueName;
+            var messages = await _sqsHelper.ReceiveMessageAsync(queueUrl);
+            var result = messages.Select(c => new  { Message = JsonSerializer.Deserialize<CustomMessageBody>(c.Body), ReceiptHandle = c.ReceiptHandle}).ToList();
             return Ok(result);
         }
     }

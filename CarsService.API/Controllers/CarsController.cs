@@ -18,11 +18,6 @@ namespace CarsService.API.Controllers
         public CarsController(ICarService carService) {
             _carService = carService;
         }
-
-        
-
-        
-
         
 
         // GET api/<CarsController>/5

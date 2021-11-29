@@ -97,7 +97,7 @@ namespace AWS.Service.SQS.SQS.Helper
                 };
                 //CheckIs there any new message available to process  
                 var result = await _sqs.ReceiveMessageAsync(request);
-
+               
                 return result.Messages.Any() ? result.Messages : new List<Message>();
             }
             catch (Exception ex)

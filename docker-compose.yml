@@ -3,7 +3,8 @@ services:
   carsservice.api:
     image: ${DOCKER_REGISTRY-}carsserviceapi
     ports: 
-       - 50002:80
+       - "50002:80"
+       - "50001:443"
     build:
       context: .
       dockerfile: CarsService.API/Dockerfile
@@ -25,6 +26,7 @@ services:
     image: ${DOCKER_REGISTRY-}garagesserviceapi
     ports: 
        - 54546:433
+       - 54547:80
     build:
       context: .
       dockerfile: GaragesService.API/Dockerfile
@@ -49,7 +51,7 @@ services:
       - DEFAULT_REGION=us-east-1
       - AWS_ACCESS_KEY_ID=hiep
       - AWS_SECRET_ACCESS_KEY=hiep
-      - SERVICES=s3,sqs,sns,lambda,dynamodb,cloudformation,sts,iam,cloudwatch,apigateway,events
+      - SERVICES=s3,sqs,sns,lambda,es,dynamodb,cloudformation,sts,iam,cloudwatch,apigateway,events
       - DEBUG=1
       - DATA_DIR=/tmp/localstack/data
       - PORT_WEB_UI=8080

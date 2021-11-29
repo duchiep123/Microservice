@@ -1,11 +1,11 @@
-FROM postgres:12-alpine AS build-env
-WORKDIR /app
+FROM mcr.microsoft.com/dotnet/sdk:5.0 AS build
+WORKDIR /src
 
-# Expose the PostgreSQL port
-EXPOSE 5432
+COPY ["startdb.sh", "startdb.sh"]
+RUN dotnet tool install --global dotnet-ef
 
-# Add VOLUMEs to allow backup of config, logs and databases
-VOLUME  ["/etc/postgresql", "/var/log/postgresql", "/var/lib/postgresql"]
+COPY . . 
+WORKDIR /src/CarsService.API
 
-# Set the default command to run when starting the container
-CMD ["postgres"]
+RUN chmod +x startdb.sh
+CMD /bin/bash startdb.sh
