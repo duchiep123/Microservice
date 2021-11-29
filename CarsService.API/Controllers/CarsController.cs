@@ -23,7 +23,7 @@ namespace CarsService.API.Controllers
         // GET api/<CarsController>/5
         [HttpGet("{id}")]
         public IActionResult GetById(int id)
-        {
+        { 
             var result = _carService.GetCarById(id);
             return Ok(result);
         }
