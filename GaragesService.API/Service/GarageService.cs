@@ -28,6 +28,7 @@ namespace GaragesService.API.Service
             return new ResponseAddGarageModel() { Garage = garage, Message = "Success", Status = 0 };
         }
 
+
         public Garage GetGarageById(int id)
         {
             var result = _garageRepository.GetGarageById(id);
