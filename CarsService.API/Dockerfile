@@ -23,7 +23,7 @@ RUN ls
 COPY --from=publish /app/publish .
 ENTRYPOINT ["dotnet", "CarsService.API.dll"]
 
-FROM build AS publish
+FROM build AS publish2
 RUN dotnet tool install --global dotnet-ef
 RUN chmod +x ./startdb.sh
 CMD /bin/bash ./startdb.sh
