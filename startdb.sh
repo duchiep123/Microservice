@@ -1,7 +1,7 @@
 #!/bin/bash
 
 set -e
-run_cmd="dotnet run --no-build --server.urls http://*:80"
+run_cmd="dotnet run --no-build --urls http://*:80"
 
 echo "Hello world"
 export PATH="$PATH:/root/.dotnet/tools"
