@@ -17,6 +17,12 @@ FROM build AS publish
 RUN dotnet publish "CarsService.API.csproj" -c Release -o /app/publish
 COPY ["CarsService.API/startdb.sh", "CarsService.API/"]
 
+FROM base AS final
+WORKDIR /app
+RUN ls
+COPY --from=publish /app/publish .
+ENTRYPOINT ["dotnet", "CarsService.API.dll"]
+
 FROM build AS publish
 RUN dotnet tool install --global dotnet-ef
 RUN chmod +x ./startdb.sh
