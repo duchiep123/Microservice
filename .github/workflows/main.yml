@@ -29,7 +29,6 @@ jobs:
         run: |
           ls
           dotnet restore "MyMicroservice.sln"
-          dotnet build --no-restore
           cd MyUnitTest
           dotnet test --no-build -v=normal
       - name: Build the Docker image
