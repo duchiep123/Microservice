@@ -24,6 +24,13 @@ jobs:
     steps:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v2
+      - name: Build project source and run unit tests
+        shell: bash
+        run: |
+          dotnet restore "MyMicroservice.sln"
+          dotnet build --no-restore
+          cd MyUnitTest
+          dotnet test --no-build -v=normal
       - name: Build the Docker image
         run: |
           docker-compose -f "docker-compose.yml" up -d --build
