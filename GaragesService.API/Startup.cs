@@ -60,6 +60,7 @@ namespace GaragesService.API
                 configuration.UseRedisStorage(Redis);
 
             });
+            
             services.AddStackExchangeRedisCache(o => o.Configuration = "redis:6379"); // config DI redis, add hangfire.aspcore package
             services.AddHangfireServer(action => action.SchedulePollingInterval = TimeSpan.FromMilliseconds(1000));//  set thoi gian nho nhat
             services.AddControllers();
@@ -78,6 +79,8 @@ namespace GaragesService.API
             services.AddSingleton<ISQSHelper, SQSHelper>();
             services.AddScoped<TasksService>();
             //services.AddHostedService<QueueReaderService>();
+            services.AddAutoMapper(typeof(Startup));
+
 
         }
 

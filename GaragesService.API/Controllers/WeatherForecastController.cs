@@ -31,8 +31,8 @@ namespace GaragesService.API.Controllers
         public IEnumerable<WeatherForecast> Get()
         {
             var mockRepository = new Mock<IGarageRepository>();
-            var mockService = new GarageService(mockRepository.Object);
-            mockRepository.Setup(x => x.GetGarageById(It.IsAny<int>())).Returns(new Garage());
+            /*var mockService = new GarageService(mockRepository.Object);
+            mockRepository.Setup(x => x.GetGarageById(It.IsAny<int>())).Returns(new Garage());*/
             var rng = new Random();
             return Enumerable.Range(1, 5).Select(index => new WeatherForecast
             {

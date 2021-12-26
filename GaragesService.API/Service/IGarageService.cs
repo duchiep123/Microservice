@@ -11,6 +11,6 @@ namespace GaragesService.API.Service
     public interface IGarageService
     {
         Task<ResponseAddGarageModel> AddNewGarage(RequestCreateGarageModel request);
-        Garage GetGarageById(int id);
+        ReturnGetGarageModel GetGarageById(int id);
     }
 }

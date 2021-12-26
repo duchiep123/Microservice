@@ -10,6 +10,6 @@ namespace AWS.Service.Models
     {
         public string MessageId { get; set; }
         public string TopicArn { get; set; }
-        public string Content { get; set; }
+        public string Message{ get; set; }
     }
 }

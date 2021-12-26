@@ -19,8 +19,9 @@ services:
       - "5432:5432"
     environment:
       - POSTGRES_PASSWORD=Hiep1234567890
+      - POSTGRES_DB=GarageManagementDB
     volumes:
-      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+      - ./initdb.sql:/docker-entrypoint-initdb.d/initdb.sql
 
   garagesservice.api:
     image: ${DOCKER_REGISTRY-}garagesserviceapi
@@ -51,7 +52,7 @@ services:
       - DEFAULT_REGION=us-east-1
       - AWS_ACCESS_KEY_ID=hiep
       - AWS_SECRET_ACCESS_KEY=hiep
-      - SERVICES=s3,sqs,sns,lambda,es,dynamodb,cloudformation,sts,iam,cloudwatch,apigateway,events
+      - SERVICES=s3,sqs,sns,lambda,es,dynamodb,ses,cloudformation,sts,iam,cloudwatch,apigateway,events
       - DEBUG=1
       - DATA_DIR=/tmp/localstack/data
       - PORT_WEB_UI=8080
