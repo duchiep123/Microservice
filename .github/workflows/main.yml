@@ -27,6 +27,7 @@ jobs:
       - name: Build project source and run unit tests
         shell: bash
         run: |
+          ls
           dotnet restore "MyMicroservice.sln"
           dotnet build --no-restore
           cd MyUnitTest
