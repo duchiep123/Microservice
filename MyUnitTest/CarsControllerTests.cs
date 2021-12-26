@@ -28,7 +28,7 @@ namespace MyUnitTest
         {
             // Arrange
             var cars = GetSampleCars();
-            int carId = 1;
+            int carId = 5;
 
             _mockService.Setup(services => services.GetCarById(carId)).Returns(cars[0]);
             _controller = new CarsController(_mockService.Object, _mockLogger.Object);
