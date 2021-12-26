@@ -2,6 +2,7 @@
 using CarsService.API.Service;
 using GarageManagementModels;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -15,16 +16,24 @@ namespace CarsService.API.Controllers
     public class CarsController : ControllerBase
     {
         ICarService _carService;
-        public CarsController(ICarService carService) {
+        private readonly ILogger<CarsController> p_logger;
+        public CarsController(ICarService carService, ILogger<CarsController> logger) {
+            p_logger = logger;
             _carService = carService;
+            p_logger.LogInformation("[CarsController] constructor");
         }
         
 
         // GET api/<CarsController>/5
         [HttpGet("{id}")]
         public IActionResult GetById(int id)
-        { 
+        {
+            p_logger.LogInformation("[CarsController] Start get car by id");
             var result = _carService.GetCarById(id);
+            p_logger.LogInformation("[CarsController] Get car completed");
+            if (result == null) {
+                return NotFound();
+            }
             return Ok(result);
         }
 

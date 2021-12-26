@@ -5,11 +5,12 @@ namespace GarageManagementModels
 {
     public class Car
     {
-        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        //[DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Id { get; set; }
         public string Name { get; set; } = "alex";
         public string Color { get; set; }
         public string Brand { get; set; }
+        public int GarageId { get; set; }
         public virtual Garage Garage { get; set; }
     }
 }

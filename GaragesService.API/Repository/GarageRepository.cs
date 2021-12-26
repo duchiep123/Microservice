@@ -1,4 +1,5 @@
 ﻿using GarageManagementModels;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -28,7 +29,7 @@ namespace GaragesService.API.Repository
         public Garage GetGarageById(int id)
         {
             var garage = _context.Garage
-                       .Where(g => g.Id == id)
+                       .Where(g => g.Id == id).Include(g => g.Cars)
                        .FirstOrDefault();
             return garage;
         }

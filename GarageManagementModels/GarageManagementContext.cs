@@ -14,13 +14,14 @@ namespace GarageManagementModels
         {
 
         }
-        public DbSet<Car> Cars { get; set; } // Cars is table name
+        public DbSet<Car> Cars { get; set; } // Cars is table name, phan biet hoa thuong
         public DbSet<Garage> Garage { get; set; } 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
-            modelBuilder.Entity<Car>().Property(c => c.Id).ValueGeneratedOnAdd();
-            modelBuilder.Entity<Garage>().Property(g => g.Id).ValueGeneratedOnAdd();
+            //modelBuilder.Entity<Car>().Property(c => c.Id).ValueGeneratedOnAdd();
+            //modelBuilder.Entity<Garage>().Property(g => g.Id).ValueGeneratedOnAdd();
+            //new GarageMap(modelBuilder.Entity<Garage>());
         }
     }
 }

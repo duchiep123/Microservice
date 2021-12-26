@@ -27,12 +27,25 @@ namespace AWS.Service.SNS.SNS.Helper
             }
             return "";
         }
+        private async Task<string> CreateTopicSNSWithSES(string topicName)
+        {
+            if (!String.IsNullOrEmpty(topicName))
+            {
+                var resultTopic = await _simpleNotificationService.CreateTopicAsync(topicName);
+                return resultTopic.HttpStatusCode == System.Net.HttpStatusCode.OK ? resultTopic.TopicArn : "";
+            }
+            return "";
+        }
 
         public async Task<string> SubscribeSQStoSNS(string topicName, string queueName, IAmazonSQS amazonSQS)
         {
             var topic = await _simpleNotificationService.FindTopicAsync(topicName);
             if (topic != null)
             {
+                SubscribeRequest subscribeRequest = new SubscribeRequest() {
+                    
+                    Protocol = "email"
+                };
                 var sqs = await amazonSQS.GetQueueUrlAsync(queueName);
                 var result = await _simpleNotificationService.SubscribeQueueAsync(topic.TopicArn, amazonSQS, sqs.QueueUrl);
                 return result;

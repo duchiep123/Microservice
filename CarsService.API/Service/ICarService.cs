@@ -1,4 +1,5 @@
-﻿using CarsService.API.RequestModels;
+﻿using CarsService.API.Models;
+using CarsService.API.RequestModels;
 using CarsService.API.ResponseModel;
 using GarageManagementModels;
 using System;
@@ -11,6 +12,6 @@ namespace CarsService.API.Service
     public interface ICarService
     {
         Task<ResponseAddCarModel> AddNewCar(RequestCreateCarModel request);
-        Car GetCarById(int id);
+        ReturnGetCarModel GetCarById(int id);
     }
 }

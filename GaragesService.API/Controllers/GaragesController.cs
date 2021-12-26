@@ -2,6 +2,7 @@
 using GaragesService.API.Service;
 using GaragesService.API.Tasks;
 using Hangfire;
+using Hangfire.Storage;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Caching.Distributed;
 using System;
@@ -31,6 +32,9 @@ namespace GaragesService.API.Controllers
         public IActionResult Get(int id)
         {
             var result = _garageService.GetGarageById(id);
+            if (result.GarageId == 0) {
+                return NotFound();
+            }
             return Ok(result);
         }
 
@@ -51,9 +55,17 @@ namespace GaragesService.API.Controllers
         [HttpGet("readqueue/{queueName}")]
         public IActionResult Read(string queueName)
         {
-            RecurringJob.AddOrUpdate<TasksService>(t => t.ReadQueue("http://localhost:4566/000000000000/"+queueName), "*/20 * * * * * ");
+           
+            RecurringJob.AddOrUpdate<TasksService>("hiepjob",t => t.ReadQueue("http://localhost:4566/000000000000/"+queueName), "*/20 * * * * * ");
 
             return Ok();
+        }
+
+        [HttpGet("stopreadqueue/{jobId}")]
+        public IActionResult StopRead(string jobId)
+        {
+            var result = BackgroundJob.Delete(jobId);
+            return Ok(result);
         }
 
         // GET api/<GaragesController>/5

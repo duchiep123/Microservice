@@ -69,6 +69,7 @@ namespace CarsService.API.Controllers
         public async Task<IActionResult> GetAllMessagesAsync(string queueName) { 
             string queueUrl = "http://localhost:4566/000000000000/" + queueName;
             var messages = await _sqsHelper.ReceiveMessageAsync(queueUrl);
+			
             var result = messages.Select(c => new  { Message = JsonSerializer.Deserialize<CustomMessageBody>(c.Body), ReceiptHandle = c.ReceiptHandle}).ToList();
             return Ok(result);
         }

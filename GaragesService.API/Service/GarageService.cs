@@ -7,14 +7,18 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Net.Http;
+using AutoMapper;
+using GarageManagementModels.Dtos;
 
 namespace GaragesService.API.Service
 {
     public class GarageService : IGarageService
     {
         private readonly IGarageRepository _garageRepository;
-        public GarageService(IGarageRepository garageRepository) {
+        private readonly IMapper _mapper;
+        public GarageService(IGarageRepository garageRepository, IMapper mapper ) {
             _garageRepository = garageRepository;
+            _mapper = mapper;
         }
         public async Task<ResponseAddGarageModel> AddNewGarage(RequestCreateGarageModel request)
         {
@@ -27,10 +31,21 @@ namespace GaragesService.API.Service
             await _garageRepository.SaveChangesAsync();
             return new ResponseAddGarageModel() { Garage = garage, Message = "Success", Status = 0 };
         }
-        public Garage GetGarageById(int id)
+        public ReturnGetGarageModel GetGarageById(int id)
         {
             var result = _garageRepository.GetGarageById(id);
-            return result;
+            if (result != null) {
+                var tmp = _mapper.Map<GarageReadDto>(result);
+                ReturnGetGarageModel returnGetGarageModel = new ReturnGetGarageModel()
+                {
+                    GarageId = tmp.Id,
+                    GarageName = tmp.Name,
+                    Address = tmp.Address,
+                    Cars = tmp.Cars.ToList<CarReadDto>()
+                };
+                return returnGetGarageModel;
+            }
+            return new ReturnGetGarageModel();
         }
     }
 }

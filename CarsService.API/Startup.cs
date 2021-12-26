@@ -1,16 +1,21 @@
 using Amazon;
+using Amazon.CloudWatchLogs;
+using Amazon.CloudWatchLogs.Model;
 using Amazon.DynamoDBv2;
 using Amazon.Extensions.NETCore.Setup;
 using Amazon.Runtime;
 using Amazon.S3;
+using Amazon.SimpleEmail;
 using Amazon.SimpleNotificationService;
 using Amazon.SimpleNotificationService.Model;
 using Amazon.SQS;
 using Amazon.SQS.Model;
+using AWS.Service.MailService;
 using AWS.Service.SNS;
 using AWS.Service.SNS.SNS.Helper;
 using AWS.Service.SQS.SQS.Helper;
 using CarsService.API.AWS.SQS.Service;
+using CarsService.API.CloudWatch;
 using CarsService.API.FilterModel;
 using CarsService.API.Repository;
 using CarsService.API.Service;
@@ -29,6 +34,9 @@ using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
 using Nest;
 using Npgsql;
+using Serilog;
+using Serilog.Events;
+using Serilog.Sinks.AwsCloudWatch;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -54,6 +62,7 @@ namespace CarsService.API
             var builder = new NpgsqlConnectionStringBuilder(connectionString);
             //var connectionString = Environment.GetEnvironmentVariable("DB_CONNECTION_STRING");
             // folder migrations is important
+            Console.WriteLine("GarageManagementModels");
             services.AddDbContext<GarageManagementContext>(options =>
                 options.UseNpgsql(
                     // connectionString, x => x.MigrationsAssembly("GarageManagementModels")
@@ -61,31 +70,14 @@ namespace CarsService.API
                 )
             );
             services.AddControllers();
+            services.AddAutoMapper(typeof(Startup));
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "CarsService.API", Version = "v1" });
                 c.OperationFilter<FileCreation>();
             });
             var appSettingsSection = Configuration.GetSection("ServiceConfiguration");
-            /*var awsCreds = new BasicAWSCredentials("hiep", "hiep");
-            var config = new AmazonSQSConfig
-            {
-                ServiceURL = "http://localhost:4566",
-                //RegionEndpoint = RegionEndpoint.USEast1
-            };
-            var amazonSqsClient = new AmazonSQSClient(awsCreds, config); // AmazonSQSClient implement IAmazonSQS
-            var createQueueRequest = new CreateQueueRequest();
-            var createQueueResponse = await amazonSqsClient.CreateQueueAsync(createQueueRequest);
-            Console.WriteLine("QueueUrl : " + createQueueResponse.QueueUrl);*/
-
-            //services.AddDefaultAWSOptions(Configuration.GetAWSOptions());
-            //services.AddAWSService<IAmazonSQS>();
-            /*var res = Configuration.GetAWSOptions();
-            Console.WriteLine(res.Credentials);
-            Console.WriteLine(res.DefaultClientConfig.ServiceURL);
-            Console.WriteLine(res.Profile);
-            Console.WriteLine(res.Region);*/
-
+           
             //If your SQS clients live with localstack in the same docker network, then it’s the container’s host name inside the docker network.In my docker - compose file it’s HOSTNAME_EXTERNAL = localstack.
 
             // If your SQS clients live on the docker host it’s HOSTNAME_EXTERNAL = localhost and you must expose your SQS port to the host.
@@ -103,6 +95,8 @@ namespace CarsService.API
             services.AddAWSService<IAmazonSimpleNotificationService>(awsOption);
             services.AddAWSService<IAmazonSQS>(awsOption);
             services.AddAWSService<IAmazonDynamoDB>(awsOption);
+            services.AddAWSService<IAmazonCloudWatchLogs>(awsOption);
+            services.AddAWSService<IAmazonSimpleEmailService>(awsOption);
             services.AddSingleton<IAmazonS3>(p => {
                 var config = new AmazonS3Config
                 {
@@ -112,17 +106,38 @@ namespace CarsService.API
                 };
                 return new AmazonS3Client("hiep", "hiep", config);
             });
+            /*services.AddSingleton<IAmazonCloudWatchLogs>(provider => {
+                return new AmazonCloudWatchLogsClient(new AmazonCloudWatchLogsConfig
+                {
+                    UseHttp = true,
+                    ServiceURL = "http://localstack:4566"
+                });
+            });*/
             //services.Configure<ServiceConfiguration>(appSettingsSection);
             services.AddScoped<IAWSSQSService, AWSSQSService>();
             services.AddScoped<ICarService, CarService>();
             services.AddScoped<ICarRepository, CarRepository>();
             services.AddScoped<ISQSHelper, SQSHelper>();
             services.AddScoped<ISNSHelper, SNSHelper>();
+            services.AddScoped<IMailService, MailService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, IAmazonCloudWatchLogs cloudWatchLogs)
         {
+            Log.Logger = new LoggerConfiguration()
+                .MinimumLevel.Debug()
+                .MinimumLevel.Override("Microsoft", LogEventLevel.Information)
+                .MinimumLevel.Override("Microsoft.AspNetCore", LogEventLevel.Warning)
+                .WriteTo.AmazonCloudWatch(new CloudWatchSinkOptions
+                {
+                    CreateLogGroup = true,
+                    LogGroupName = "dev-logs",
+                    TextFormatter = new AmazonCloudWatchTextFormatter(),
+                    LogStreamNameProvider = new AmazonCloudWatchLogStreamNameProvider()
+                }, cloudWatchLogs)
+                .CreateLogger();
+            
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();

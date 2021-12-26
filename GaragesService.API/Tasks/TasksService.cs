@@ -71,7 +71,7 @@ namespace GaragesService.API.Tasks
                 try
                 {
                     var message = JsonSerializer.Deserialize<CustomMessageBody>(item.Body);
-                    if (message.Content.Contains("Get all"))
+                    if (message.Message.Contains("Get all"))
                     {
                         var result = _garageRepository.GetGarages();
                        
@@ -94,7 +94,7 @@ namespace GaragesService.API.Tasks
                     }
                     else
                     {
-                        Console.WriteLine(message.Content);
+                        Console.WriteLine(message.Message);
                         // sau 3 lan thi vo dlq
                         
                     }
